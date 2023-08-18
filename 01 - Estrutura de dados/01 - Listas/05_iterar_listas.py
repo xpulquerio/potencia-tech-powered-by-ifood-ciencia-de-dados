@@ -1,6 +1,7 @@
 carros = ["gol", "celta", "palio"]
+numeros = [1,2,3]
 
-for carro in carros:
+for carro in numeros:
     print(carro)
 
 
