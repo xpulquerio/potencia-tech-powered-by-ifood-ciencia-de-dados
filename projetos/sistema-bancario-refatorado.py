@@ -44,7 +44,6 @@ def listar_contas_do_usuario(usuario):
     print("=" * 50)
     if usuario['contas']:
         for x in usuario['contas']:
-            print(x)
             print(f"""Conta: {contas[str(x)]['conta']} | Agência: {contas[str(x)]['agencia']}""")
         print("-" * 50)
     else:
