@@ -114,8 +114,10 @@ while True:
         if opcao == "q":
                 print("Saindo...")
                 break
+        
         elif opcao == "e":
             cpf = str(input("Qual o CPF do Usuário? "))
+            
             if cpf_cadastrado(cpf):
                 while True:
                     menu_interno()
@@ -123,8 +125,10 @@ while True:
                     if opcao1 == "q":
                         print("Saindo...")
                         break
+                    
                     elif opcao1 == "l":
                         listar_contas_do_usuario(usuarios[cpf])
+                    
                     elif opcao1 == "d":
                         conta = int(input(f"Qual número da conta? "))
                         if conta in usuarios[cpf]['contas']:
@@ -132,6 +136,7 @@ while True:
                             depositar(conta, valor)                     
                         else:
                             print("Número da conta inválido!")
+                    
                     elif opcao1 == "s":
                         conta = int(input(f"Qual número da conta? "))
                         if conta in usuarios[cpf]['contas']:
@@ -139,6 +144,7 @@ while True:
                             sacar(conta=conta, saque=saque)
                         else:
                             print("Número da conta inválido!")
+                    
                     elif opcao1 == "e":
                         conta = int(input(f"Qual número da conta? "))
                         if conta in usuarios[cpf]['contas']:
