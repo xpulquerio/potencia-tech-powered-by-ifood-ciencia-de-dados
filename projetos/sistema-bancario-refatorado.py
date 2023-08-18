@@ -1,12 +1,12 @@
 AGENCIA = '0001'
 usuarios = {
-    "09984441466" : {
+    "1" : {
         'nome': 'Ewerson', 
         'data_nascimento': "08/08/1995",
         'endereco': "Av. Wanderley, 107 - Santa Luzia - Penedo/AL",
         'contas': [],
         },
-    "00000000000" : {
+    "0" : {
         'nome': 'João', 
         'data_nascimento': "08/08/1995",
         'endereco': "Rodovia Mario Feary Leahy, 87 - Dom Constantino - Penedo/AL",
@@ -18,11 +18,13 @@ contas = {
         'conta': 1,
         'agencia': AGENCIA,
         'saldo': 3000.0,
+        'saques': 0,
     }, 
     "2" : {
         'conta': 2,
         'agencia': AGENCIA,
         'saldo': 0.0,
+        'saques': 0,
     }  
 }
 def barra_f():
@@ -55,65 +57,56 @@ def cpf_cadastrado(cpf):
             return True
     return False
 
-#listar_usuarios()
-#listar_contas_do_usuario(usuarios["09984441466"])
-#listar_contas_do_usuario(usuarios["00000000000"])
-
-
 def menu_interno ():
     print("""
-    ### MENU ###
+    ### MENU INTERNO ###
+    [l] Listar contas
     [d] Depositar
     [s] Sacar
     [e] Extrato
-    [l] Listar contas
     [q] Sair
     ### ---- ###
     """)
     
 def menu_principal ():
     print("""
-    ### MENU ###
+    ### MENU PRINCIPAL ###
     [e] Entrar
     [c] Cadastrar usuário
     [a] Cadastrar conta
+    [l] Listar usuários
     [q] Sair
     ### ---- ###
     """)
-    
-# def sacar(*, saldo, valor, extrato, limite, numero_saques, limite_saques):
-#     # entrada: saldo, valor, extrato, limite, numero_saques, limite_saques
-#     # saída: saldo, extrato
-#     pass
-# def depsitar(saldo, valor, extrato):
-#     # saída: saldo, extrato
-#     pass
-# def exibir_extrato(saldo, / extrato): #posição / nomeados
-#     extrato = f"""
-# EXTRATO:
-# Conta Corrente: 
-# Saldo: R$ {saldo:.2f}
-# Saque realizados: {numero_de_saques}
-# """
-#     print(extrato)
-# def cadastrar_usuario():
-#     pass
-# def criar_conta_corrente():
-#     pass
 
+def depositar (conta, valor):
+    contas[str(conta)]['saldo'] += valor
+    print(f"Depósito no valor de {valor} - Saldo atualizado: {contas[str(conta)]['saldo']}")
 
+def sacar(*, conta, saque):
+    if contas[str(conta)]['saques']<LIMITE_DE_SAQUES:
+        if contas[str(conta)]['saldo'] >= saque:
+            contas[str(conta)]['saldo'] -= saque
+            print(f"Saque no valor de {saque} - Saldo atualizado: {contas[str(conta)]['saldo']}")
+            contas[str(conta)]['saques'] += 1
+        else:
+            print("Saldo insuficiente")
+    else:
+        print("Limite de saques atingido!")
+        
+def extrato(conta):
+    print(f"""EXTRATO:
+Conta Corrente: 
+Saldo: R$ {contas[str(conta)]['saldo']:.2f}
+Saque realizados: {contas[str(conta)]['saques']}""")
 
-saldo = 0
-saque = 0
-numero_de_saques = 0
 LIMITE_DE_SAQUES = 3
-usuarios.get
 
 while True:
-    
+    #listar_usuarios()
     menu_principal()
     
-    opcao = str(input("Escolha sua opção: "))
+    opcao = str(input("Escolha sua opção: ")).lower()
     #print(len(opcao))
     if len(opcao) > 1:
         print("Opção indisponível, digite apenas uma letra!")
@@ -130,25 +123,28 @@ while True:
                     if opcao1 == "q":
                         print("Saindo...")
                         break
+                    elif opcao1 == "l":
+                        listar_contas_do_usuario(usuarios[cpf])
                     elif opcao1 == "d":
-                        saldo += float(input(f"Quanto você deseja depositar? "))
-                        print(f"Deposito realizado com sucesso!")
-                        pass
-                    elif opcao1 == "s":
-                        if numero_de_saques<LIMITE_DE_SAQUES:
-                            saque = float(input(f"Quanto você deseja sacar? "))
-                            if saldo >= saque:
-                                saldo -= saque
-                                print(f"Saque de {saque} realizado com sucesso!")
-                                saque = 0
-                                numero_de_saques += 1
-                            else:
-                                print("Saldo insuficiente")
+                        conta = int(input(f"Qual número da conta? "))
+                        if conta in usuarios[cpf]['contas']:
+                            valor = float(input(f"Quanto você deseja depositar? "))
+                            depositar(conta, valor)                     
                         else:
-                            print("Limite de saques atingido!")
-                            
+                            print("Número da conta inválido!")
+                    elif opcao1 == "s":
+                        conta = int(input(f"Qual número da conta? "))
+                        if conta in usuarios[cpf]['contas']:
+                            saque = float(input(f"Quanto você deseja sacar? "))
+                            sacar(conta=conta, saque=saque)
+                        else:
+                            print("Número da conta inválido!")
                     elif opcao1 == "e":
-                        pass
+                        conta = int(input(f"Qual número da conta? "))
+                        if conta in usuarios[cpf]['contas']:
+                            extrato(conta=conta)
+                        else:
+                            print("Número da conta inválido!")
                     else:
                         print("Opção indisponível, tente novamente!")
             else:
@@ -162,9 +158,9 @@ while True:
             else:
                 nome_new = str(input("Qual o NOME? "))
                 data_nascimento_new = str(input("Qual a DATA DE NASCIMENTO (xx/xx/xxxx)? "))
-                #endereco = str(input("Qual o ENDEREÇO (Logradouro, Nº - Bairro - Cidade/(Sigla do Estado))? "))
-                usuarios.update({cpf: {'nome': nome_new, 'data_de_nascimento': data_nascimento_new}})
-                listar_usuarios()
+                endereco = str(input("Qual o ENDEREÇO (Logradouro, Nº - Bairro - Cidade/(Sigla do Estado))? "))
+                usuarios.update({cpf: {'nome': nome_new, 'data_de_nascimento': data_nascimento_new, 'contas': []}})
+                #listar_usuarios()
         elif opcao == 'a':
             cpf = str(input("Qual o CPF do Usuário? "))
             if cpf_cadastrado(cpf):
@@ -174,17 +170,16 @@ while True:
                     temp_key = 0
                     for x in contas.keys():
                         temp_key = int(x)
-                    contas.update({str(temp_key+1): {'conta': temp_key+1, 'agencia': AGENCIA, 'saldo':0}})
+                    contas.update({str(temp_key+1): {'conta': temp_key+1, 'agencia': AGENCIA, 'saldo': 0, 'saques': 0}})
                     usuarios[cpf]['contas'].append(temp_key+1)
                     print(usuarios[cpf]['contas'])
                 else:
                     pass
             else:
                 print("Usuário não existe")
+        elif opcao == 'l':
+            listar_usuarios()
         else:
             print("Opção indisponível, tente novamente!")
-        
-        listar_usuarios()
-
     
 print(f"""Obrigado por usar nosso sistema!""")
